@@ -22,17 +22,13 @@ if __name__ == '__main__':
 
     driver = webdriver.Chrome(executable_path=f"{dir_path}/chromedriver")
 
-    with open('publicConfig.json') as json_file:
-        data = json.load(json_file)
-        my_setting_agent = data["settings"]["1"]
-
-    print("Hello World!")
-
     dir_path = os.path.dirname(os.path.realpath(__file__))
 
-    driver = webdriver.Chrome(executable_path=f"{dir_path}/chromedriver")
-
-    driver.get("http://www.python.org")
-    driver.save_screenshot("screenshot.png")
+    with open('config.json') as json_file:
+        data = json.load(json_file)
+        for site in data["sites"]:
+            url=site["url"]
+            driver.get(url)
+            driver.save_screenshot(url.replace("/","_")+".png")
 
     driver.close()

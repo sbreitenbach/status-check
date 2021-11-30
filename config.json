@@ -1,0 +1,6 @@
+{
+    "sites": [
+        {"url":"http://www.python.org"},
+        {"url":"https://www.python.org/about/"}
+    ]
+}
