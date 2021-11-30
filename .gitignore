@@ -4,6 +4,8 @@ log.log
 tryStuff.py
 .DS_Store
 secretConfig.json
+chromedriver
+*.png
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
