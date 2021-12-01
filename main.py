@@ -1,6 +1,8 @@
 import json
 import logging
-import os 
+import os
+import pathlib
+import time
 
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
@@ -13,8 +15,10 @@ logging.basicConfig(filename='log.log',
                     level=logging.INFO)
 ##End Config##
 
+
 def returns_true():
     return True
+
 
 if __name__ == '__main__':
 
@@ -22,13 +26,16 @@ if __name__ == '__main__':
 
     driver = webdriver.Chrome(executable_path=f"{dir_path}/chromedriver")
 
-    dir_path = os.path.dirname(os.path.realpath(__file__))
+    new_dir = f"{dir_path}/pictures/{round((time.time()))}"
+
+    pathlib.Path(new_dir).mkdir(parents=True, exist_ok=False)
 
     with open('config.json') as json_file:
         data = json.load(json_file)
         for site in data["sites"]:
-            url=site["url"]
+            url = site["url"]
             driver.get(url)
-            driver.save_screenshot(url.replace("/","_")+".png")
+            save_path = f"{new_dir}/{url.replace('/', '_')}.png"
+            driver.save_screenshot(save_path)
 
     driver.close()
