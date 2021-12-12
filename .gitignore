@@ -6,6 +6,8 @@ tryStuff.py
 secretConfig.json
 chromedriver
 *.png
+todo.txt
+
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
