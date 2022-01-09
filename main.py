@@ -2,6 +2,7 @@ import json
 import logging
 import os
 import pathlib
+import requests
 import time
 
 from selenium import webdriver
@@ -12,7 +13,7 @@ logging.basicConfig(filename='log.log',
                     filemode='a',
                     format='%(asctime)s %(levelname)s %(funcName)s %(lineno)d %(message)s',
                     datefmt="%Y-%m-%dT%H:%M:%S%z",
-                    level=logging.INFO)
+                    level=logging.DEBUG)
 ##End Config##
 
 
@@ -23,6 +24,15 @@ def find_subdirs(path):
     subdirs = [x for x in os.listdir(path) if os.path.isdir(os.path.join(path, x))]
     last_2_subdirs = subdirs[-2:]
     return last_2_subdirs
+
+def check_response_code(url):
+    response = requests.get(url)
+    if response.status_code == 200:
+        logging.debug(f"{url} is up and running")
+        return True
+    else:
+        logging.error(f"{url} is down with status code {response.status_code}")
+        return False
 
 def take_screenshots(dir_path):
     driver = webdriver.Chrome(executable_path=f"{dir_path}/chromedriver")
@@ -35,6 +45,8 @@ def take_screenshots(dir_path):
         data = json.load(json_file)
         for site in data["sites"]:
             url = site["url"]
+            #TODO - rework these to be independent
+            check_response_code(url)
             driver.get(url)
             save_path = f"{new_dir}/{url.replace('/', '_')}.png"
             driver.save_screenshot(save_path)
@@ -45,6 +57,7 @@ def get_2_most_recent_dirs(dir_path):
     subdirs = find_subdirs(dir_path)
     last_2_subdirs = subdirs[-2:]
     return last_2_subdirs
+
 
 if __name__ == '__main__':
 
