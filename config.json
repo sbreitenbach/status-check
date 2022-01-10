@@ -1,10 +1,7 @@
 {
     "sites": [
-        {
-            "url": "http://www.python.org"
-        },
-        {
-            "url": "https://www.python.org/about/"
-        }
+            "http://www.python.org",
+            "https://www.python.org/about/",
+            "https://httpstat.us/500"
     ]
 }

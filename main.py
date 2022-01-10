@@ -34,23 +34,18 @@ def check_response_code(url):
         logging.error(f"{url} is down with status code {response.status_code}")
         return False
 
-def take_screenshots(dir_path):
+def take_screenshots(dir_path,sites):
     driver = webdriver.Chrome(executable_path=f"{dir_path}/chromedriver")
 
     new_dir = f"{dir_path}/pictures/{round((time.time()))}"
 
     pathlib.Path(new_dir).mkdir(parents=True, exist_ok=False)
     
-    with open('config.json') as json_file:
-        data = json.load(json_file)
-        for site in data["sites"]:
-            url = site["url"]
-            #TODO - rework these to be independent
-            check_response_code(url)
-            driver.get(url)
-            save_path = f"{new_dir}/{url.replace('/', '_')}.png"
-            driver.save_screenshot(save_path)
-            logging.debug(f"Saved screenshot to {save_path}")
+    for site in sites:
+        driver.get(site)
+        save_path = f"{new_dir}/{site.replace('/', '_')}.png"
+        driver.save_screenshot(save_path)
+        logging.debug(f"Saved screenshot to {save_path}")
     driver.close()
 
 def get_2_most_recent_dirs(dir_path):
@@ -63,7 +58,17 @@ if __name__ == '__main__':
 
     dir_path = os.path.dirname(os.path.realpath(__file__))
 
-    take_screenshots(dir_path)
+    with open('config.json') as json_file:
+        data = json.load(json_file)
+        sites = data["sites"]
+    
+    http_status = True
+    for site in sites:
+        if not check_response_code(site):
+            http_status = False
+    
+
+    take_screenshots(dir_path, sites)
     
     dirs = find_subdirs(dir_path+"/pictures")
     most_recent_dir = dirs[-1]
@@ -71,4 +76,9 @@ if __name__ == '__main__':
     second_most_recent_dir = dirs[-2]
     second_most_recent_dir_path = f"{dir_path}/pictures/{second_most_recent_dir}"
     most_recent_pictures = os.listdir(most_recent_dir_path)
-    second_most_recent_pictures = os.listdir(second_most_recent_dir_path)    
+    second_most_recent_pictures = os.listdir(second_most_recent_dir_path)
+
+    if http_status:
+        print("All sites passed the http status check")
+    else: 
+        print("One or more sites failed the http status check")
