@@ -1,3 +1,4 @@
+import cv2
 import json
 import logging
 import os
@@ -7,6 +8,7 @@ import time
 
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
+from skimage.metrics import structural_similarity as ssim
 
 ##Begin Config##
 logging.basicConfig(filename='log.log',
@@ -15,10 +17,6 @@ logging.basicConfig(filename='log.log',
                     datefmt="%Y-%m-%dT%H:%M:%S%z",
                     level=logging.DEBUG)
 ##End Config##
-
-
-def returns_true():
-    return True
 
 def find_subdirs(path):
     subdirs = [x for x in os.listdir(path) if os.path.isdir(os.path.join(path, x))]
@@ -53,6 +51,13 @@ def get_2_most_recent_dirs(dir_path):
     last_2_subdirs = subdirs[-2:]
     return last_2_subdirs
 
+def compare_images(img_path_1,img_path_2):
+    img1 = cv2.imread(img_path_1)
+    img2 = cv2.imread(img_path_2)
+    img1 = cv2.cvtColor(img1, cv2.COLOR_BGR2GRAY)
+    img2 = cv2.cvtColor(img2, cv2.COLOR_BGR2GRAY)
+    s = ssim(img1, img2)
+    return s
 
 if __name__ == '__main__':
 
