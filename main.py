@@ -59,6 +59,25 @@ def compare_images(img_path_1,img_path_2):
     s = ssim(img1, img2)
     return s
 
+def compare_images_in_dirs(dir_path_1,dir_path_2):
+    #check if images are the same
+    #check if image exists in both
+    #if image exists in both, compare them
+
+    for img_path_1 in os.listdir(dir_path_1):
+        img_path_1 = os.path.join(dir_path_1, img_path_1)
+        img_path_2 = os.path.join(dir_path_2, img_path_1)
+        if os.path.isfile(img_path_1) and os.path.isfile(img_path_2):
+            s = compare_images(img_path_1,img_path_2)
+            if s < 0.9:
+                logging.error(f"{img_path_1} and {img_path_2} are different")
+                print(f"{img_path_1} and {img_path_2} are different")
+            else:
+                logging.debug(f"{img_path_1} and {img_path_2} are the same")
+                print(f"{img_path_1} and {img_path_2} are the same")
+        else:
+            logging.error(f"{img_path_1} or {img_path_2} does not exist")
+
 if __name__ == '__main__':
 
     dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -80,8 +99,7 @@ if __name__ == '__main__':
     most_recent_dir_path = f"{dir_path}/pictures/{most_recent_dir}"
     second_most_recent_dir = dirs[-2]
     second_most_recent_dir_path = f"{dir_path}/pictures/{second_most_recent_dir}"
-    most_recent_pictures = os.listdir(most_recent_dir_path)
-    second_most_recent_pictures = os.listdir(second_most_recent_dir_path)
+    compare_images_in_dirs(most_recent_dir_path,second_most_recent_dir_path)
 
     if http_status:
         print("All sites passed the http status check")
