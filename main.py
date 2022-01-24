@@ -60,10 +60,7 @@ def compare_images(img_path_1,img_path_2):
     return s
 
 def compare_images_in_dirs(dir_path_1,dir_path_2):
-    #check if images are the same
-    #check if image exists in both
-    #if image exists in both, compare them
-
+    images_pass = True
     for img_path_1 in os.listdir(dir_path_1):
         img_path_1 = os.path.join(dir_path_1, img_path_1)
         img_path_2 = os.path.join(dir_path_2, img_path_1)
@@ -72,11 +69,12 @@ def compare_images_in_dirs(dir_path_1,dir_path_2):
             if s < 0.9:
                 logging.error(f"{img_path_1} and {img_path_2} are different")
                 print(f"{img_path_1} and {img_path_2} are different")
+                images_pass = False
             else:
                 logging.debug(f"{img_path_1} and {img_path_2} are the same")
-                print(f"{img_path_1} and {img_path_2} are the same")
         else:
-            logging.error(f"{img_path_1} or {img_path_2} does not exist")
+            logging.warning(f"{img_path_1} or {img_path_2} does not exist")
+    return images_pass
 
 if __name__ == '__main__':
 
@@ -94,14 +92,16 @@ if __name__ == '__main__':
 
     take_screenshots(dir_path, sites)
     
+    
     dirs = find_subdirs(dir_path+"/pictures")
     most_recent_dir = dirs[-1]
     most_recent_dir_path = f"{dir_path}/pictures/{most_recent_dir}"
     second_most_recent_dir = dirs[-2]
     second_most_recent_dir_path = f"{dir_path}/pictures/{second_most_recent_dir}"
-    compare_images_in_dirs(most_recent_dir_path,second_most_recent_dir_path)
+    
+    image_status = compare_images_in_dirs(most_recent_dir_path,second_most_recent_dir_path)
 
-    if http_status:
-        print("All sites passed the http status check")
+    if http_status & image_status:
+        print("All sites passed the status check")
     else: 
-        print("One or more sites failed the http status check")
+        print("One or more sites failed the status check")
