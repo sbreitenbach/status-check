@@ -15,8 +15,9 @@ logging.basicConfig(filename='log.log',
                     filemode='a',
                     format='%(asctime)s %(levelname)s %(funcName)s %(lineno)d %(message)s',
                     datefmt="%Y-%m-%dT%H:%M:%S%z",
-                    level=logging.DEBUG)
+                    level=logging.INFO)
 ##End Config##
+
 
 def find_subdirs(path):
     subdirs = [x for x in os.listdir(path) if os.path.isdir(os.path.join(path, x))]
