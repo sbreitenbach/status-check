@@ -1,7 +1,6 @@
 {
     "sites": [
-            "http://www.python.org",
-            "https://www.python.org/about/",
-            "https://httpstat.us/500"
+        "site1",
+        "site2"
     ]
 }
