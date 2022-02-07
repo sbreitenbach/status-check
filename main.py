@@ -1,8 +1,10 @@
+import re
 import cv2
 import json
 import logging
 import os
 import pathlib
+import pytesseract
 import requests
 import time
 
@@ -20,9 +22,11 @@ logging.basicConfig(filename='log.log',
 
 
 def find_subdirs(path):
-    subdirs = [x for x in os.listdir(path) if os.path.isdir(os.path.join(path, x))]
+    subdirs = [x for x in os.listdir(
+        path) if os.path.isdir(os.path.join(path, x))]
     last_2_subdirs = subdirs[-2:]
     return last_2_subdirs
+
 
 def check_response_code(url):
     response = requests.get(url)
@@ -33,13 +37,14 @@ def check_response_code(url):
         logging.error(f"{url} is down with status code {response.status_code}")
         return False
 
-def take_screenshots(dir_path,sites):
+
+def take_screenshots(dir_path, sites):
     driver = webdriver.Chrome(executable_path=f"{dir_path}/chromedriver")
 
     new_dir = f"{dir_path}/pictures/{round((time.time()))}"
 
     pathlib.Path(new_dir).mkdir(parents=True, exist_ok=False)
-    
+
     for site in sites:
         driver.get(site)
         save_path = f"{new_dir}/{site.replace('/', '_')}.png"
@@ -47,12 +52,14 @@ def take_screenshots(dir_path,sites):
         logging.debug(f"Saved screenshot to {save_path}")
     driver.close()
 
+
 def get_2_most_recent_dirs(dir_path):
     subdirs = find_subdirs(dir_path)
     last_2_subdirs = subdirs[-2:]
     return last_2_subdirs
 
-def compare_images(img_path_1,img_path_2):
+
+def compare_images(img_path_1, img_path_2):
     img1 = cv2.imread(img_path_1)
     img2 = cv2.imread(img_path_2)
     img1 = cv2.cvtColor(img1, cv2.COLOR_BGR2GRAY)
@@ -60,13 +67,14 @@ def compare_images(img_path_1,img_path_2):
     s = ssim(img1, img2)
     return s
 
-def compare_images_in_dirs(dir_path_1,dir_path_2):
+
+def compare_images_in_dirs(dir_path_1, dir_path_2):
     images_pass = True
     for img_path_1 in os.listdir(dir_path_1):
         img_path_1 = os.path.join(dir_path_1, img_path_1)
         img_path_2 = os.path.join(dir_path_2, img_path_1)
         if os.path.isfile(img_path_1) and os.path.isfile(img_path_2):
-            s = compare_images(img_path_1,img_path_2)
+            s = compare_images(img_path_1, img_path_2)
             if s < 0.9:
                 logging.error(f"{img_path_1} and {img_path_2} are different")
                 print(f"{img_path_1} and {img_path_2} are different")
@@ -77,6 +85,16 @@ def compare_images_in_dirs(dir_path_1,dir_path_2):
             logging.warning(f"{img_path_1} or {img_path_2} does not exist")
     return images_pass
 
+
+def extract_text_from_image(image_path):
+    result = ""
+    img = cv2.imread(image_path)
+    img = cv2.threshold(gry, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
+    result = pytesseract.image_to_string(img)
+    result = result.lower()
+    return result
+
+
 if __name__ == '__main__':
 
     dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -84,25 +102,25 @@ if __name__ == '__main__':
     with open('config.json') as json_file:
         data = json.load(json_file)
         sites = data["sites"]
-    
+        error_words = data["error_words"]
+
     http_status = True
     for site in sites:
         if not check_response_code(site):
             http_status = False
-    
 
     take_screenshots(dir_path, sites)
-    
-    
+
     dirs = find_subdirs(dir_path+"/pictures")
     most_recent_dir = dirs[-1]
     most_recent_dir_path = f"{dir_path}/pictures/{most_recent_dir}"
     second_most_recent_dir = dirs[-2]
     second_most_recent_dir_path = f"{dir_path}/pictures/{second_most_recent_dir}"
-    
-    image_status = compare_images_in_dirs(most_recent_dir_path,second_most_recent_dir_path)
+
+    image_status = compare_images_in_dirs(
+        most_recent_dir_path, second_most_recent_dir_path)
 
     if http_status & image_status:
         print("All sites passed the status check")
-    else: 
+    else:
         print("One or more sites failed the status check")
