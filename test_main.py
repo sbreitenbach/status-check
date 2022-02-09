@@ -9,7 +9,7 @@ def test_plways_passes():
 GSD1 = "test_resources/gsd1.jpeg"
 GSD2 = "test_resources/gsd2.jpeg"
 GSD3 = "test_resources/gsd3.jpeg"
-TEXT_IMAGE = "test_resources/text_image.png"
+TEXT_IMAGE = "test_resources/text.png"
 
 def test_image_compare_same():
     assert(main.compare_images(GSD1, GSD1) == 1.0)

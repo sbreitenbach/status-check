@@ -1,4 +1,3 @@
-import re
 import cv2
 import json
 import logging
@@ -8,6 +7,7 @@ import pytesseract
 import requests
 import time
 
+from PIL import Image
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from skimage.metrics import structural_similarity as ssim
@@ -88,12 +88,11 @@ def compare_images_in_dirs(dir_path_1, dir_path_2):
 
 def extract_text_from_image(image_path):
     result = ""
-    img = cv2.imread(image_path)
-    img = cv2.threshold(gry, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
+    img = Image.open(image_path)
     result = pytesseract.image_to_string(img)
     result = result.lower()
+    result = result.strip()
     return result
-
 
 if __name__ == '__main__':
 
