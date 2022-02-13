@@ -1,7 +1,7 @@
 opencv-python==4.5.5.62
 Pillow==9.0.0
 pytesseract==0.3.7
-tesseract-ocr==0.1.7
+tesseract-ocr==0.0.1
 pytest==6.2.5
 requests==2.25.1
 scikit-image==0.19.1
