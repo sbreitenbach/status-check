@@ -2,5 +2,12 @@
     "sites": [
         "site1",
         "site2"
+    ],
+    "error_words": [
+        "error",
+        "fail",
+        "wrong",
+        "sorry",
+        "issue"
     ]
 }
