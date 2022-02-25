@@ -24,6 +24,7 @@ logging.basicConfig(filename='log.log',
 def find_subdirs(path):
     subdirs = [x for x in os.listdir(
         path) if os.path.isdir(os.path.join(path, x))]
+    subdirs.sort()
     last_2_subdirs = subdirs[-2:]
     return last_2_subdirs
 
@@ -51,12 +52,6 @@ def take_screenshots(dir_path, sites):
         driver.save_screenshot(save_path)
         logging.debug(f"Saved screenshot to {save_path}")
     driver.close()
-
-
-def get_2_most_recent_dirs(dir_path):
-    subdirs = find_subdirs(dir_path)
-    last_2_subdirs = subdirs[-2:]
-    return last_2_subdirs
 
 
 def compare_images(img_path_1, img_path_2):
