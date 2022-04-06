@@ -66,8 +66,8 @@ def compare_images(img_path_1, img_path_2):
 def compare_images_in_dirs(dir_path_1, dir_path_2):
     images_pass = True
     for img_path_1 in os.listdir(dir_path_1):
-        img_path_1 = os.path.join(dir_path_1, img_path_1)
         img_path_2 = os.path.join(dir_path_2, img_path_1)
+        img_path_1 = os.path.join(dir_path_1, img_path_1)
         if os.path.isfile(img_path_1) and os.path.isfile(img_path_2):
             s = compare_images(img_path_1, img_path_2)
             if s < 0.9:
