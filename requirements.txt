@@ -1,4 +1,4 @@
-opencv-python==4.5.5.62
+opencv-python==4.8.1.78
 Pillow==10.0.1
 pytest==6.2.5
 requests==2.31.0
